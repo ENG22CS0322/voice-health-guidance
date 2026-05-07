@@ -33,6 +33,39 @@ designed to improve accessibility to basic health information in India.
 - JavaScript
 - Web Speech API
 
+## 🛠️ Tech Stack
+
+- Flutter
+- Dart
+- OpenAI API
+- speech_to_text
+- flutter_tts
+- shared_preferences
+- flutter_dotenv
+
+## 🚀 Future Scope
+
+- Offline AI assistance
+- Emergency SOS integration
+- Wearable health tracking
+- Regional language expansion
+- Smart symptom prediction
+
 ## Note
 This system is for educational purposes only and does not provide medical diagnosis.
 >>>>>>> 74ec2628a897a985acd0f63108fe7e4effe2261c
+# Health Max 🩺
+
+An AI-powered multilingual healthcare companion designed for accessible and emotionally comforting health guidance.
+
+## ✨ Features
+
+- 🎙️ AI Voice Assistant
+- 🧠 OpenAI-powered responses
+- 🌐 Hindi & English support
+- 👨‍🌾 Personalized rural healthcare dashboard
+- 👨‍💻 IT employee wellness mode
+- 🩺 Symptom guidance system
+- 🔊 Speech-to-text and text-to-speech
+- 🎨 Dynamic themes
+- 🤖 Baymax-inspired healthcare interaction
