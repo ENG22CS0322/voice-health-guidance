@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Health Guidance Bot</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            overflow: hidden;
+        }
+
+        /* Baymax Face Container */
+        .baymax-face {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 60px;
+        }
+
+        /* The Eyes */
+        .eye {
+            width: 48px;
+            height: 48px;
+            background-color: #000;
+            border-radius: 50%;
+            transform-origin: center;
+            animation: openEyes 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        /* The Line connecting the eyes */
+        .line {
+            width: 140px;
+            height: 4px;
+            background-color: #000;
+            margin: 0 -3px;
+            /* Connect seamlessly */
+            transform-origin: center;
+            animation: expandLine 1s ease-out forwards;
+        }
+
+        @keyframes expandLine {
+            0% {
+                transform: scaleX(0);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: scaleX(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes openEyes {
+            0% {
+                transform: scaleY(0.05);
+            }
+
+            50% {
+                transform: scaleY(0.05);
+            }
+
+            100% {
+                transform: scaleY(1);
+            }
+        }
+
+        @keyframes blink {
+
+            0%,
+            96%,
+            100% {
+                transform: scaleY(1);
+            }
+
+            98% {
+                transform: scaleY(0.05);
+            }
+        }
+
+        /* Interaction Container */
+        .interaction-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 450px;
+            padding: 0 20px;
+            box-sizing: border-box;
+            opacity: 0;
+            animation: fadeIn 1s 1.2s forwards;
+        }
+
+        #response {
+            min-height: 24px;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.25rem;
+            font-weight: 300;
+            line-height: 1.5;
+            transition: opacity 0.3s;
+        }
+
+        .input-wrapper {
+            display: flex;
+            width: 100%;
+            border-bottom: 2px solid #000;
+            padding-bottom: 8px;
+            position: relative;
+        }
+
+        .input-wrapper::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #000;
+            transition: width 0.3s ease;
+        }
+
+        .input-wrapper:focus-within::after {
+            width: 100%;
+        }
+
+        input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 1.1rem;
+            padding: 5px 10px;
+            background: transparent;
+            font-family: inherit;
+        }
+
+        input::placeholder {
+            color: #b0b0b0;
+            font-weight: 300;
+        }
+
+        button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            line-height: 1;
+            cursor: pointer;
+            padding: 0 10px;
+            color: #000;
+            transition: transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:hover {
+            transform: translateX(4px);
+        }
+
+        .disclaimer {
+            position: absolute;
+            bottom: 30px;
+            font-size: 0.8rem;
+            color: #999;
+            text-align: center;
+            width: 100%;
+            max-width: 80%;
+            opacity: 0;
+            animation: fadeIn 1s 1.5s forwards;
+        }
+
+        .loading #response {
+            animation: pulseText 1.5s infinite;
+        }
+
+        @keyframes pulseText {
+
+            0%,
+            100% {
+                opacity: 0.4;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logout-link {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            color: #000;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 300;
+            opacity: 0;
+            transition: opacity 0.3s;
+            animation: fadeInOp 1s 1.5s forwards;
+            z-index: 10;
+        }
+
+        .logout-link:hover {
+            opacity: 1 !important;
+        }
+
+        @keyframes fadeInOp {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 0.5;
+            }
+        }
+
+        .sidebar {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            animation: fadeInOp 1s 1.5s forwards;
+            z-index: 10;
+            align-items: flex-start;
+            min-width: 120px;
+        }
+
+        .sidebar:hover {
+            opacity: 1 !important;
+        }
+
+        .new-chat-link {
+            color: #000;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 300;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 8px;
+            width: 100%;
+        }
+
+        .history-item {
+            color: #666;
+            font-size: 0.85rem;
+            font-weight: 300;
+            cursor: pointer;
+        }
+
+        .history-item:hover {
+            color: #000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="/logout" class="logout-link">Logout</a>
+
+    <div class="sidebar">
+        <a href="/" class="new-chat-link">New Chat</a>
+        <div class="history-item">History [Today, 10:30 AM]</div>
+    </div>
+
+    <div class="baymax-face">
+        <div class="eye"></div>
+        <div class="line"></div>
+        <div class="eye"></div>
+    </div>
+
+    <div class="interaction-container">
+        <p id="response">Hello. I am your personal healthcare companion.</p>
+
+        <div class="input-wrapper">
+            <select id="language">
+                <option value="English">English</option>
+                <option value="Hindi">Hindi</option>
+            </select>
+            <br><br>
+            <input type="text" id="userInput" placeholder="Describe your symptoms..." onkeypress="handleKeyPress(event)"
+                autocomplete="off">
+            <button onclick="sendMessage()" aria-label="Send">↳</button>
+        </div>
+    </div>
+
+    <p class="disclaimer">
+        Disclaimer: This system provides general health guidance only and is not a substitute for professional medical
+        advice.
+    </p>
+
+    <script>
+        // Start blinking after the initial animation completes
+        setTimeout(() => {
+            const eyes = document.querySelectorAll('.eye');
+            eyes.forEach(eye => {
+                // Remove the forwards animation to allow the new infinite animation to run
+                eye.style.animation = 'blink 5s infinite';
+            });
+        }, 1300);
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const inputField = document.getElementById("userInput");
+            const responseField = document.getElementById("response");
+            const message = inputField.value.trim();
+            const language = document.getElementById("language").value;
+            const bodyObj = document.body;
+
+            if (!message) {
+                responseField.innerText = "Please describe your symptoms.";
+                return;
+            }
+
+            responseField.innerText = "Scanning...";
+            bodyObj.classList.add("loading");
+            inputField.value = '';
+
+            try {
+                const response = await fetch("/chat", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        language: language
+                    })
+                });
+
+                const data = await response.json();
+
+                bodyObj.classList.remove("loading");
+                responseField.innerText = data.response;
+
+                // 🔊 Text-to-Speech Output
+                if (window.speechSynthesis) {
+                    const speech = new SpeechSynthesisUtterance(data.response);
+                    speech.lang = "en-US";
+                    speech.rate = 0.9; // Slightly slower for a more soothing tone
+                    speech.pitch = 0.8;
+
+                    speechSynthesis.speak(speech);
+                }
+
+            } catch (error) {
+                bodyObj.classList.remove("loading");
+                responseField.innerText = "I am experiencing network connectivity issues.";
+            }
+        }
+    </script>
+</body>
+
+</html>
